@@ -14,6 +14,7 @@ namespace Memory
         [SerializeField] int numberRows = 4;
         [SerializeField] int numberLines = 4;
         [SerializeField] float piecesOffset = 0.1f;
+        [SerializeField] GameObject safeArea;
 
         List<Sprite> spritesListTemp;
         List<Vector2> tempCoordinateList;
@@ -66,8 +67,7 @@ namespace Memory
             for (int i = 0; i < numberRows; i++)
             {
                 for (int j = 0; j < numberLines; j++)
-                {
-                    print(pieceSize);
+                {                    
                     float scaleFactor = ChangePieceScale();
                     pieceCoordinate = new Vector2(
                         (i * pieceSize - ((numberRows - pieceSize) / 2)) * scaleFactor,
@@ -80,7 +80,7 @@ namespace Memory
         }
 
         //mount the board with a temporary sprite list
-        private async void MountBoard()
+        private void MountBoard()
         {
             Vector2 worldCoordinatesOffset;
             worldCoordinatesOffset.y = numberLines / 2 - .5f;
@@ -125,8 +125,7 @@ namespace Memory
             float sizePiece = (float)numberRows / widthCameraUnits;
             float realPieceSize = piece.GetComponent<BoxCollider2D>().size.x;
             pieceScale = realPieceSize / sizePiece;
-            return pieceScale;
-            //return 1;
+            return pieceScale;            
         }
     }
 

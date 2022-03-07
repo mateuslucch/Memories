@@ -5,46 +5,43 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    [SerializeField] string level = "Addlevelscenename";
+    [SerializeField] string startMenu = "AddStartMenuscenename";
+
     private void Update()
     {
-        if (Input.GetKey("escape"))
+        if (Input.GetKey(KeyCode.Escape))
         {
+            print("teste");
             LoadMainMenu();
         }
-    }
-
-    public void LoadPreviosScene()
-    {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex - 1);
     }
 
     public void LoadMainMenu()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene("Start Menu");
-      
+        SceneManager.LoadScene(startMenu);
     }
-        public void LoadGameScene()
-        {
-          
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;            
-            SceneManager.LoadScene("Level1");
-        }
 
-        public void QuitGame()
-        {
-            Application.Quit();
-        }
+    public void LoadGameScene()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(level);
+    }
 
-        public void ReturnToGame()
-        {
-           
-        }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 
-        public void ManualScene()
-        {
-            SceneManager.LoadScene("Manual Scene");
-        }
+    public void ReturnToGame()
+    {
 
     }
+
+    public void ManualScene()
+    {
+        SceneManager.LoadScene("Manual Scene");
+    }
+
+}

@@ -8,14 +8,13 @@ namespace Memory
     public class GameSession : MonoBehaviour
     {
         GameObject[] selectedPieces;
-        [SerializeField] int scoreUp = 2;
-        [SerializeField] int scoreDown = -1;
-        [SerializeField] float delayBeforeHide = 1.5f;
-        [SerializeField] TextMeshProUGUI messageBox;
-        [SerializeField] GameObject inGameMenu;
-        [SerializeField] GameObject chooseSizeMenu;
 
-        [Header("Audio Configs")]
+        [SerializeField] float delayBeforeHide = 1.5f;
+        [SerializeField] MenuHandler menuHandler;
+        [SerializeField] ScoreCounter scoreHandler;
+        [SerializeField] SoundControl soundControl;
+
+        [Header("Audio Files")]
         [SerializeField] AudioClip revealPiece;
         [SerializeField] AudioClip matchSound;
         [SerializeField] AudioClip notMatchSound;
@@ -26,17 +25,15 @@ namespace Memory
 
         private void Start()
         {
-            inGameMenu.SetActive(false);
             selectedPieces = new GameObject[2];
-            messageBox.text = "";
         }
 
         public void AddObjectToArray(GameObject piece)
         {
             if (mouseClick)
             {
-                AudioSource.PlayClipAtPoint(revealPiece, Camera.main.transform.position);
-                //print(piece.transform.Find("Animal").GetComponent<SpriteRenderer>().sprite.name);
+                soundControl.PlaySound(revealPiece);
+                //AudioSource.PlayClipAtPoint(revealPiece, Camera.main.transform.position);
                 piece.GetComponent<Pieces>().RevealImage();
                 selectedPieces[index] = piece;
                 index += 1;
@@ -46,7 +43,7 @@ namespace Memory
 
         public void HideLevelMenu()
         {
-            chooseSizeMenu.SetActive(false);
+            menuHandler.LevelChoiceMenu(false);
         }
 
         public void CompareObjects()
@@ -54,19 +51,25 @@ namespace Memory
             if (index > 1)
             {
                 mouseClick = false;
+
+                // pieces dont match
                 if (selectedPieces[0].transform.Find("Animal").GetComponent<SpriteRenderer>().sprite.name !=
                 selectedPieces[1].transform.Find("Animal").GetComponent<SpriteRenderer>().sprite.name)
                 {
-                    AudioSource.PlayClipAtPoint(notMatchSound, Camera.main.transform.position);
+                    soundControl.PlaySound(notMatchSound);
+                    //AudioSource.PlayClipAtPoint(notMatchSound, Camera.main.transform.position);
                     HideBackImages();
-                    FindObjectOfType<ScoreCounter>().ScoreCount(scoreDown);
+                    scoreHandler.ScoreCount(false);
                 }
+                // pieces match
                 else
                 {
-                    AudioSource.PlayClipAtPoint(matchSound, Camera.main.transform.position);
+                    soundControl.PlaySound(matchSound);
+                    //AudioSource.PlayClipAtPoint(matchSound, Camera.main.transform.position);
                     mouseClick = true;
                     index = 0;
-                    FindObjectOfType<ScoreCounter>().ScoreCount(scoreUp);
+
+                    scoreHandler.ScoreCount(true);
                     CheckEndGame();
                 }
             }
@@ -81,7 +84,7 @@ namespace Memory
                 StartCoroutine(pieces.GetComponent<Pieces>().HideImagesCountdown(0.5f));
             }
         }
-        
+
         private void CheckEndGame()
         {
             numberOfPiecesSolved++;
@@ -93,26 +96,28 @@ namespace Memory
 
         private void VictoryPath()
         {
-            inGameMenu.SetActive(true);
-            FindObjectOfType<ScoreCounter>().TopScore();
-            messageBox.text = "You did it!!\nTotal Score:\n" + FindObjectOfType<ScoreCounter>().ReturnScore().ToString();
+            menuHandler.EndGameMenu(true);
+            scoreHandler.FinalScore();
         }
 
         public void RestartGame()
         {
+            // destroy pieces from last game
             Pieces[] pieces = FindObjectsOfType<Pieces>();
             foreach (Pieces piece in pieces)
             {
                 Destroy(piece.gameObject);
             }
+
+            // reset things
             numberOfPiecesSolved = 0;
-            FindObjectOfType<ScoreCounter>().ResetScore();
+            scoreHandler.ResetScore();
             //FindObjectOfType<DistributingPieces>().RestartGame(numberLines, numberRows);
             index = 0;
-            inGameMenu.SetActive(false);
-            chooseSizeMenu.SetActive(true);
+
+            menuHandler.EndGameMenu(false);
+            menuHandler.InGameMenu(false);
+            menuHandler.LevelChoiceMenu(true);
         }
-
     }
-
 }

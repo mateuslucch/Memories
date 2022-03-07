@@ -7,42 +7,47 @@ namespace Memory
 {
     public class ScoreCounter : MonoBehaviour
     {
-        [SerializeField] TextMeshProUGUI scoreBox;
-        [SerializeField] TextMeshProUGUI topScoreBox;
+        [SerializeField] UiTextHandler uiTextHandler;
+
+        [Header("Score points")]
+        [SerializeField] int scoreUp = 2;
+        [SerializeField] int scoreDown = -1;
 
         int topScore = 0;
         int score = 0;
 
         private void Start()
         {
-            PrintScore();
-            topScoreBox.text = "Top Score: \n" + topScore.ToString();
+            UpdateScore();
+            // topScoreBox.text = "Top Score: \n" + topScore.ToString();
         }
 
-        public void ScoreCount(int score)
+        public void ScoreCount(bool condition)
         {
-            this.score += score;
-            PrintScore();
+            if (condition)
+            {
+                score += scoreUp;
+            }
+            else { score -= scoreDown; }
+
+            UpdateScore();
         }
 
         public void ResetScore()
         {
             score = 0;
-            PrintScore();
+            UpdateScore();
         }
 
-        private void PrintScore()
+        private void UpdateScore()
         {
-            scoreBox.text = "Score: \n" + score.ToString();
+            uiTextHandler.ChangeScore(score);
         }
 
-        public void TopScore()
+        public void FinalScore()
         {
-            if (score > 0)
-            {
-                topScore = score;
-                topScoreBox.text = "Top Score: \n" + topScore.ToString();
-            }
+            if (score > topScore) { topScore = score; }
+            uiTextHandler.EndGameScore(topScore, score);
         }
 
         public int ReturnScore()

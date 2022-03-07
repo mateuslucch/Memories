@@ -34,7 +34,6 @@ namespace Memory
             parentOriginalScale = transform.localScale;
             childOriginalScale = figuresChildTransform[0].transform.localScale;
 
-            print(childOriginalScale);
             StartCoroutine(HideImagesCountdown(3f));
             gameSession = FindObjectOfType<GameSession>();
         }
@@ -87,38 +86,12 @@ namespace Memory
                     state = State.Standing;
                     pieceChild.localScale = new Vector3(childOriginalScale.x, pieceChild.localScale.y, pieceChild.localScale.z);
                     gameObject.GetComponent<BoxCollider2D>().enabled = true;
-                }                
+                }
             }
-            
-            /* CHANGE ENTIRE PIECE SCALE
-            if (transform.localScale.x <= originalScale.x && transform.localScale.x >= -originalScale.x)
-            {
-                transform.localScale = new Vector3(transform.localScale.x - Time.deltaTime * rotateSpeed, transform.localScale.y, transform.localScale.z);
-                if (transform.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 2; }
-            }
-            else
-            {
-                state = State.Standing;
-                transform.localScale = new Vector3(originalScale.x, transform.localScale.y, transform.localScale.z);
-                gameObject.GetComponent<BoxCollider2D>().enabled = true;
-            }
-            */
-
         }
 
         private void ShowingAnimation()
         {
-            /* if (transform.localScale.x <= originalScale.x && transform.localScale.x >= -originalScale.x)
-            {
-                transform.localScale = new Vector3(transform.localScale.x - Time.deltaTime * rotateSpeed, transform.localScale.y, transform.localScale.z);
-                if (transform.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 0; }
-            }
-            else
-            {
-                state = State.Standing;
-                transform.localScale = new Vector3(originalScale.x, transform.localScale.y, transform.localScale.z);
-                gameSession.CompareObjects();
-            } */
             foreach (Transform pieceObjects in figuresChildTransform)
             {
                 if (pieceObjects.localScale.x <= childOriginalScale.x && pieceObjects.localScale.x >= -childOriginalScale.x)

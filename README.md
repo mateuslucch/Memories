@@ -1,3 +1,3 @@
-## Memory game prject
+## Memory game project
 # Made with Unity Engine
 In progress!

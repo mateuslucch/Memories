@@ -13,6 +13,7 @@ namespace Memory
         {
             FindObjectOfType<DistributingPieces>().RestartGame(numberLines, numberRows);
             FindObjectOfType<GameSession>().HideLevelMenu();
+            FindObjectOfType<SoundControl>().ClickSound();
         }
     }
 }
