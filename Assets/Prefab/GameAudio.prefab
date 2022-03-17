@@ -140,8 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ba4d55f86436794d869591f01eade77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundOnBox: {fileID: 0}
-  soundOffBox: {fileID: 0}
-  musicCheckBox: {fileID: 0}
-  soundCheckBox: {fileID: 0}
-  gameAudioSource: {fileID: 0}
+  musicButton: {fileID: 0}
+  sfxButton: {fileID: 0}
+  clickButton: {fileID: 8300000, guid: d015238331cf1574b9926f9adadc100c, type: 3}

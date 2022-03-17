@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace Memory
 {
+    [RequireComponent(typeof(ScreensReference))]
     public class DistributingPieces : MonoBehaviour
     {
-        [SerializeField] GameObject piece; //piece prefab
+        [SerializeField] GameObject piecePrefab; //piece prefab
         [SerializeField] Sprite[] piecesSprites; //all possible images
 
         [SerializeField] GameObject piecesGroup; //parent to store the pieces, so the hierarchy doesnt look a mess
@@ -14,16 +15,20 @@ namespace Memory
         [SerializeField] int numberRows = 4;
         [SerializeField] int numberLines = 4;
         [SerializeField] float piecesOffset = 0.1f;
-        [SerializeField] GameObject safeArea;
+        [SerializeField] GameObject boardArea;
 
         List<Sprite> spritesListTemp;
         List<Vector2> tempCoordinateList;
+        ScreensReference screensSizes;
+
         [SerializeField] List<Vector2> pieceCoordinateListTest;
 
         private void Start()
         {
             tempCoordinateList = new List<Vector2>();
-            //MountSpritesIndex();
+            screensSizes = GetComponent<ScreensReference>();
+
+            //CreateSpritesIndex();
             //MountBoard();            
         }
 
@@ -31,8 +36,10 @@ namespace Memory
         {
             this.numberLines = numberLines;
             this.numberRows = numberRows;
+            float razao = numberLines / numberRows;
+
             CreateSpritesIndex();
-            CoordinatesList();
+            ListOfCoordinates();
             MountBoard();
         }
 
@@ -58,21 +65,25 @@ namespace Memory
             }
         }
 
-        private void CoordinatesList()
+        private void ListOfCoordinates()
         {
-
             Vector2 pieceCoordinate = new Vector2();
-            float pieceSize = piece.GetComponent<BoxCollider2D>().size.x;
+            float pieceSize = piecePrefab.GetComponent<BoxCollider2D>().size.x;
+            float scaleFactor = ChangePieceScale();
 
             for (int i = 0; i < numberRows; i++)
             {
                 for (int j = 0; j < numberLines; j++)
-                {                    
-                    float scaleFactor = ChangePieceScale();
+                {
                     pieceCoordinate = new Vector2(
                         (i * pieceSize - ((numberRows - pieceSize) / 2)) * scaleFactor,
                         (j * pieceSize - ((numberLines - pieceSize) / 2)) * scaleFactor
                         );
+
+                    // sums the position of board reference to centralize pieces
+                    pieceCoordinate += new Vector2(
+                        boardArea.GetComponent<RectTransform>().position.x,
+                        boardArea.GetComponent<RectTransform>().position.y);
                     tempCoordinateList.Add(pieceCoordinate);
                     pieceCoordinateListTest.Add(pieceCoordinate);
                 }
@@ -82,9 +93,7 @@ namespace Memory
         //mount the board with a temporary sprite list
         private void MountBoard()
         {
-            Vector2 worldCoordinatesOffset;
-            worldCoordinatesOffset.y = numberLines / 2 - .5f;
-            worldCoordinatesOffset.x = numberRows / 2 - .5f;
+            float pieceScale = ChangePieceScale();
 
             //distribute pieces on screen
             for (var i = 0; i < numberRows; i++)
@@ -93,40 +102,58 @@ namespace Memory
                 {
                     int spriteIconIndex = Random.Range(0, spritesListTemp.Count);
 
-                    //Vector2 piecePosition = new Vector2(i - worldCoordinatesOffset.x, j - worldCoordinatesOffset.y);
-
-                    int index = Random.Range(0, tempCoordinateList.Count); //sort random index inside coordinates list
+                    //sort random index inside coordinates list
+                    int index = Random.Range(0, tempCoordinateList.Count);
                     Vector2 piecePosition = new Vector2(tempCoordinateList[index].x, tempCoordinateList[index].y);
-                    tempCoordinateList.RemoveAt(index); // remove the used coordinate
+                    // remove the used coordinate
+                    tempCoordinateList.RemoveAt(index);
 
-                    GameObject newPiece = Instantiate(piece, piecePosition, transform.rotation);
-                    newPiece.transform.localScale = new Vector3(ChangePieceScale() - piecesOffset, ChangePieceScale() - piecesOffset, 1f);
+                    GameObject newPiece = Instantiate(piecePrefab, piecePosition, transform.rotation);
+                    newPiece.transform.localScale = new Vector3(pieceScale - piecesOffset, pieceScale - piecesOffset, 1f);
 
-                    newPiece.GetComponent<Pieces>().ChangeImage(spritesListTemp[spriteIconIndex]); //add sprite to piece from piecesTempSprite
-                    spritesListTemp.RemoveAt(spriteIconIndex); //remove the added piece from temp
+                    //add sprite to piece from piecesTempSprite
+                    newPiece.GetComponent<Pieces>().ChangeImage(spritesListTemp[spriteIconIndex]);
+                    //remove the added sprite from sprite list (not repeat)
+                    spritesListTemp.RemoveAt(spriteIconIndex);
+                    //add piece to a parent(organize in hierarchy)
+                    newPiece.transform.SetParent(piecesGroup.transform);
 
-                    newPiece.transform.SetParent(piecesGroup.transform); //add piece to a parent(organize in hierarchy)
                 }
             }
         }
 
-        public int NumberOfPieces() { return (numberLines * numberRows); }
+        public int NumberPieces() { return (numberLines * numberRows); }
 
         private float ChangePieceScale()
         {
             float pieceScale = 0;
 
-            Camera mainCamera = Camera.main;
+            float boardSizeHeightUnits = screensSizes.getBoardUnits().y;
+            float boardSizeWidthUnits = screensSizes.getBoardUnits().x;
 
-            // calculate screen size in units
-            float heightCameraUnits = mainCamera.orthographicSize * 2;
-            float widthCameraUnits = mainCamera.pixelWidth * heightCameraUnits / mainCamera.pixelHeight; //mainCamera.pixel* change with device
+            // piece size, related to camera size (no safe area related, dont use!!)
+            // float newSizePiece = (float)numberLines / heightCameraUnits;
+            // float newSizePiece = (float)numberRows / widthCameraUnits;
 
-            float sizePiece = (float)numberRows / widthCameraUnits;
-            float realPieceSize = piece.GetComponent<BoxCollider2D>().size.x;
-            pieceScale = realPieceSize / sizePiece;
-            return pieceScale;            
+            // piece size, related to board, inside of safe area (need logic to change between height or width)
+
+            float newSizePiece;
+            //newSizePiece = (float)numberLines / boardSizeHeightUnits;
+
+            // calculate piece size for one direction
+            newSizePiece = (float)numberRows / boardSizeWidthUnits;
+
+            // test to see if all pieces together will be bigger than board size, then change newPieceSize again if it is
+            if (((newSizePiece + piecesOffset) * numberLines + piecesOffset) > boardSizeHeightUnits)
+            {
+                newSizePiece = (float)numberLines / boardSizeHeightUnits;
+            }
+
+            // size piece (1 unit usually, from collider (not good i think))
+            float realPieceSize = piecePrefab.GetComponent<BoxCollider2D>().size.x;
+
+            pieceScale = realPieceSize / newSizePiece;
+            return pieceScale;
         }
     }
-
 }

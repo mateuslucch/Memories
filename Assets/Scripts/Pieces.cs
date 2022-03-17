@@ -27,7 +27,10 @@ namespace Memory
 
         private void Start()
         {
-            figuresChildTransform = new Transform[] { backgroundSquare.GetComponent<Transform>(), figureImageObject.GetComponent<Transform>() };
+            figuresChildTransform = new Transform[] {
+                backgroundSquare.GetComponent<Transform>(),
+                figureImageObject.GetComponent<Transform>()
+                };
 
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
@@ -65,6 +68,7 @@ namespace Memory
             state = State.Rotating;
         }
 
+        // hide images, when start game or when not matched
         public IEnumerator HideImagesCountdown(float timeUntilHide)
         {
             yield return new WaitForSecondsRealtime(timeUntilHide);
@@ -90,19 +94,20 @@ namespace Memory
             }
         }
 
+        // show piece
         private void ShowingAnimation()
         {
-            foreach (Transform pieceObjects in figuresChildTransform)
+            foreach (Transform pieceChild in figuresChildTransform)
             {
-                if (pieceObjects.localScale.x <= childOriginalScale.x && pieceObjects.localScale.x >= -childOriginalScale.x)
+                if (pieceChild.localScale.x <= childOriginalScale.x && pieceChild.localScale.x >= -childOriginalScale.x)
                 {
-                    pieceObjects.localScale = new Vector3(pieceObjects.localScale.x - Time.deltaTime * rotateSpeed, pieceObjects.localScale.y, pieceObjects.localScale.z);
-                    if (pieceObjects.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 0; }
+                    pieceChild.localScale = new Vector3(pieceChild.localScale.x - Time.deltaTime * rotateSpeed, pieceChild.localScale.y, pieceChild.localScale.z);
+                    if (pieceChild.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 0; }
                 }
                 else
                 {
                     state = State.Standing;
-                    pieceObjects.localScale = new Vector3(childOriginalScale.x, pieceObjects.localScale.y, pieceObjects.localScale.z);
+                    pieceChild.localScale = new Vector3(childOriginalScale.x, pieceChild.localScale.y, pieceChild.localScale.z);
                     gameSession.CompareObjects();
                 }
             }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 namespace Memory
@@ -19,20 +18,24 @@ namespace Memory
         [SerializeField] AudioClip matchSound;
         [SerializeField] AudioClip notMatchSound;
 
+        AdTrigger adTrigger;
         int index = 0;
         bool mouseClick = true;
-        int numberOfPiecesSolved = 0;
+        int numberOfMatchs = 0;
 
         private void Start()
         {
+            EndGame.gameFinished = true;
             selectedPieces = new GameObject[2];
+            adTrigger = FindObjectOfType<AdTrigger>();
         }
 
         public void AddObjectToArray(GameObject piece)
         {
+            adTrigger.CountClicks();
             if (mouseClick)
             {
-                soundControl.PlaySound(revealPiece);
+                soundControl.PlayPieceSound(revealPiece);
                 //AudioSource.PlayClipAtPoint(revealPiece, Camera.main.transform.position);
                 piece.GetComponent<Pieces>().RevealImage();
                 selectedPieces[index] = piece;
@@ -56,7 +59,7 @@ namespace Memory
                 if (selectedPieces[0].transform.Find("Animal").GetComponent<SpriteRenderer>().sprite.name !=
                 selectedPieces[1].transform.Find("Animal").GetComponent<SpriteRenderer>().sprite.name)
                 {
-                    soundControl.PlaySound(notMatchSound);
+                    soundControl.PlayPieceSound(notMatchSound);
                     //AudioSource.PlayClipAtPoint(notMatchSound, Camera.main.transform.position);
                     HideBackImages();
                     scoreHandler.ScoreCount(false);
@@ -64,7 +67,7 @@ namespace Memory
                 // pieces match
                 else
                 {
-                    soundControl.PlaySound(matchSound);
+                    soundControl.PlayPieceSound(matchSound);
                     //AudioSource.PlayClipAtPoint(matchSound, Camera.main.transform.position);
                     mouseClick = true;
                     index = 0;
@@ -87,15 +90,24 @@ namespace Memory
 
         private void CheckEndGame()
         {
-            numberOfPiecesSolved++;
-            if (numberOfPiecesSolved == FindObjectOfType<DistributingPieces>().NumberOfPieces() / 2)
+            numberOfMatchs++;
+            if (numberOfMatchs == FindObjectOfType<DistributingPieces>().NumberPieces() / 2)
             {
-                VictoryPath();
+                //VictoryPath();
+                // end game now start with StartAd()
+                StartAd();
             }
         }
 
-        private void VictoryPath()
+        private void StartAd()
         {
+            adTrigger.StartAd();
+        }
+
+        // VictoryPath is now called from AdTrigger
+        public void VictoryPath()
+        {
+            EndGame.gameFinished = true;
             menuHandler.EndGameMenu(true);
             scoreHandler.FinalScore();
         }
@@ -110,9 +122,8 @@ namespace Memory
             }
 
             // reset things
-            numberOfPiecesSolved = 0;
+            numberOfMatchs = 0;
             scoreHandler.ResetScore();
-            //FindObjectOfType<DistributingPieces>().RestartGame(numberLines, numberRows);
             index = 0;
 
             menuHandler.EndGameMenu(false);
