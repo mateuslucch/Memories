@@ -9,10 +9,10 @@ public class AdManager : MonoBehaviour, IUnityAdsListener
 
     public static AdManager Instance;
 
-
 #if UNITY_ANDROID
     private string gameId = "4662353"; // gameid for android
-    private string showTag = "Rewarded Android";
+    //private string showTag = "Rewarded Android";
+    private string showTag = "rewardVideo";
 #elif UNITY_IOS
     private string gameId = "4662352"; // gameid for ios
     private string showTag = "Rewarded iOS";

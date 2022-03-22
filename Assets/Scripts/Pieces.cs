@@ -2,115 +2,126 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Memory
+public class Pieces : MonoBehaviour
 {
-    public class Pieces : MonoBehaviour
+    [SerializeField] GameObject backgroundSquare;
+    [SerializeField] GameObject figureImageObject;
+    [SerializeField] GameObject questionMark;
+    [SerializeField] float rotateSpeed = 100f;
+
+    Transform[] figuresChildTransform;
+
+    int rotateSpin;
+
+    GameSession gameSession;
+
+    SpriteRenderer spriteRenderer;
+
+    enum State { Standing, Rotating }
+    State state = State.Standing;
+    float objectRotateAngle = 0;
+    bool isFirstClick = false;
+
+    Vector3 parentOriginalScale;
+    Vector3 childOriginalScale;
+
+    private void Start()
     {
-        [SerializeField] GameObject backgroundSquare;
-        [SerializeField] GameObject figureImageObject;
-        [SerializeField] float rotateSpeed = 100f;
+        float timeBeforeHide = TimeToHide.timeBeforeHide;
 
-        Transform[] figuresChildTransform;
-
-        float rotateSpin;
-
-        GameSession gameSession;
-
-        SpriteRenderer spriteRenderer;
-
-        enum State { Standing, Rotating }
-        State state = State.Standing;
-        float objectRotateAngle = 0;
-
-        Vector3 parentOriginalScale;
-        Vector3 childOriginalScale;
-
-        private void Start()
-        {
-            figuresChildTransform = new Transform[] {
+        figureImageObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        questionMark.SetActive(false);
+        figuresChildTransform = new Transform[] {
                 backgroundSquare.GetComponent<Transform>(),
                 figureImageObject.GetComponent<Transform>()
                 };
 
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
-            parentOriginalScale = transform.localScale;
-            childOriginalScale = figuresChildTransform[0].transform.localScale;
+        parentOriginalScale = transform.localScale;
+        childOriginalScale = figuresChildTransform[0].transform.localScale;
 
-            StartCoroutine(HideImagesCountdown(3f));
-            gameSession = FindObjectOfType<GameSession>();
-        }
+        StartCoroutine(HideImagesCountdown(timeBeforeHide));
+        gameSession = FindObjectOfType<GameSession>();
+    }
 
-        private void Update()
+    private void FixedUpdate()
+    {
+        if (state == State.Rotating)
         {
-            if (state == State.Rotating)
-            {
-                if (rotateSpin == -1) { ShowingAnimation(); }
-                else { ChangeScale(); }
-            }
+            // Layer is 1 to show, -1 to hide image
+            if (rotateSpin == -1) { ShowImage(true, 1); }
+            else { ShowImage(false, -1); }
         }
+    }
 
-        public void ChangeImage(Sprite animalSprite)
-        {
-            spriteRenderer = figureImageObject.GetComponent<SpriteRenderer>();
-            spriteRenderer.sprite = animalSprite;
-        }
+    public void ChangeImage(Sprite animalSprite)
+    {
+        spriteRenderer = figureImageObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = animalSprite;
+    }
 
-        private void OnMouseDown()
+    private void OnMouseDown()
+    {
+        if (!MenuOpenStatic.menuOpen)
         {
             gameSession.AddObjectToArray(gameObject);
+            isFirstClick = true;
         }
+    }
 
-        public void RevealImage()
-        {
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            rotateSpin = -1;
-            state = State.Rotating;
-        }
+    public void RevealImage()
+    {
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        rotateSpin = -1;
+        state = State.Rotating;
+    }
 
-        // hide images, when start game or when not matched
-        public IEnumerator HideImagesCountdown(float timeUntilHide)
-        {
-            yield return new WaitForSecondsRealtime(timeUntilHide);
-            rotateSpin = 1;
-            state = State.Rotating;
-        }
+    // hide images, when starting game or when they not match
+    public IEnumerator HideImagesCountdown(float timeUntilHide)
+    {
+        yield return new WaitForSecondsRealtime(timeUntilHide);
+        rotateSpin = 1;
+        state = State.Rotating;
+    }
 
-        private void ChangeScale()
+    public void RemoveQuestionMark()
+    {
+        questionMark.SetActive(false);
+    }
+
+    private void ShowImage(bool showImage, int layerChange)
+    {
+        foreach (Transform pieceChild in figuresChildTransform)
         {
-            foreach (Transform pieceChild in figuresChildTransform)
+            if (pieceChild.localScale.x <= childOriginalScale.x && pieceChild.localScale.x >= -childOriginalScale.x)
             {
-                if (pieceChild.localScale.x <= childOriginalScale.x && pieceChild.localScale.x >= -childOriginalScale.x)
+                RotateObject(pieceChild, layerChange);
+            }
+            else
+            {
+                state = State.Standing;
+                pieceChild.localScale = new Vector3(childOriginalScale.x, pieceChild.localScale.y, pieceChild.localScale.z);
+
+                if (showImage)
                 {
-                    pieceChild.localScale = new Vector3(pieceChild.localScale.x - Time.deltaTime * rotateSpeed, pieceChild.localScale.y, pieceChild.localScale.z);
-                    if (pieceChild.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 2; }
+                    gameSession.CompareObjects();
                 }
                 else
                 {
-                    state = State.Standing;
-                    pieceChild.localScale = new Vector3(childOriginalScale.x, pieceChild.localScale.y, pieceChild.localScale.z);
+                    if (!isFirstClick) { questionMark.SetActive(true); }
                     gameObject.GetComponent<BoxCollider2D>().enabled = true;
                 }
             }
         }
+    }
 
-        // show piece
-        private void ShowingAnimation()
+    private void RotateObject(Transform pieceChild, int sortingOrder)
+    {
+        pieceChild.localScale = new Vector3(pieceChild.localScale.x - Time.unscaledDeltaTime * rotateSpeed, pieceChild.localScale.y, pieceChild.localScale.z);
+        if (pieceChild.localScale.x < 0f)
         {
-            foreach (Transform pieceChild in figuresChildTransform)
-            {
-                if (pieceChild.localScale.x <= childOriginalScale.x && pieceChild.localScale.x >= -childOriginalScale.x)
-                {
-                    pieceChild.localScale = new Vector3(pieceChild.localScale.x - Time.deltaTime * rotateSpeed, pieceChild.localScale.y, pieceChild.localScale.z);
-                    if (pieceChild.localScale.x < 0f) { backgroundSquare.GetComponent<SpriteRenderer>().sortingOrder = 0; }
-                }
-                else
-                {
-                    state = State.Standing;
-                    pieceChild.localScale = new Vector3(childOriginalScale.x, pieceChild.localScale.y, pieceChild.localScale.z);
-                    gameSession.CompareObjects();
-                }
-            }
+            figureImageObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
         }
     }
 }

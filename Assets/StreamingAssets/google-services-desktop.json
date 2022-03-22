@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "605161040327",
+    "project_id": "match-the-animals",
+    "storage_bucket": "match-the-animals.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605161040327:android:bf8ccfafe9d07515f211e2",
+        "android_client_info": {
+          "package_name": "com.MateusLucchese.com.unity.template.mobile2D"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "605161040327-mc6jp9notl92pue2jdn55se2oksppj3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvv3d_uHm-_LjU9IinB4ODYqnwkWUg8HQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "605161040327-mc6jp9notl92pue2jdn55se2oksppj3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

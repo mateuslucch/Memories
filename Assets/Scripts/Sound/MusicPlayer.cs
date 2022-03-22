@@ -5,11 +5,13 @@ public class MusicPlayer : MonoBehaviour
 {
 
     [SerializeField] AudioClip[] musicList;
-    
+
     [SerializeField] float musicStartVolume = 0.6f;
 
     AudioSource myAudioSource;
     int musicIndex;
+    // gameMuted is changed by toggle
+    bool gameMuted = false;
 
     private void Start()
     {
@@ -20,7 +22,7 @@ public class MusicPlayer : MonoBehaviour
 
     public void ChangeSong() //altera musica, chamado no start e quando troca de fase
     {
-        musicIndex = Random.Range(0, musicList.Length - 1);
+        musicIndex = Random.Range(0, musicList.Length );
         PlayMusic();
     }
 
@@ -28,7 +30,7 @@ public class MusicPlayer : MonoBehaviour
     {
         myAudioSource.clip = musicList[musicIndex];
         myAudioSource.Play();
-        StartCoroutine(waitAudio());
+        StartCoroutine(WaitAudio());
     }
 
     public void MusicButton()
@@ -36,17 +38,34 @@ public class MusicPlayer : MonoBehaviour
         if (gameObject.GetComponent<AudioSource>().volume == musicStartVolume)
         {
             gameObject.GetComponent<AudioSource>().volume = 0;
+            gameMuted = true;
         }
         else
         {
             gameObject.GetComponent<AudioSource>().volume = musicStartVolume;
+            gameMuted = false;
         }
     }
 
-    private IEnumerator waitAudio()
+    private IEnumerator WaitAudio()
     {
         yield return new WaitForSeconds(musicList[musicIndex].length);
         print("end of sound");
         ChangeSong();
+    }
+
+    public void EndGameMute(bool mute)
+    {
+        if (!gameMuted)
+        {
+            if (mute)
+            {
+                gameObject.GetComponent<AudioSource>().volume = 0;
+            }
+            else
+            {
+                gameObject.GetComponent<AudioSource>().volume = musicStartVolume;
+            }
+        }
     }
 }

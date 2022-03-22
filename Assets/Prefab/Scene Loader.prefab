@@ -45,3 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: level
   startMenu: MainMenu
+  credits: Credits

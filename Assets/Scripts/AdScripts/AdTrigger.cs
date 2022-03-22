@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Memory;
 using UnityEngine;
 
 public class AdTrigger : MonoBehaviour
@@ -11,8 +10,20 @@ public class AdTrigger : MonoBehaviour
     [SerializeField] int clicksToTrigger = 70;
     [SerializeField] float waitTime = 5f;
 
+    [SerializeField] int testCount;
+
+    string playerPrefId = "ClickCounterSave";
+
+    private void Start()
+    {
+        // load last clickCounter value
+        ClicksCount.clickCounter = PlayerPrefs.GetInt(playerPrefId);
+        testCount = ClicksCount.clickCounter;
+    }
+
     public void StartAd()
     {
+
         // turn on ad wehn true
         if (ClicksCount.clickCounter > clicksToTrigger)
         {
@@ -43,5 +54,7 @@ public class AdTrigger : MonoBehaviour
     public void CountClicks()
     {
         ClicksCount.clickCounter++;
+        PlayerPrefs.SetInt(playerPrefId, ClicksCount.clickCounter);
+        testCount = ClicksCount.clickCounter;
     }
 }

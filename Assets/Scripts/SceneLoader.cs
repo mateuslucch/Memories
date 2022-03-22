@@ -7,26 +7,35 @@ public class SceneLoader : MonoBehaviour
 {
     [SerializeField] string level = "Addlevelscenename";
     [SerializeField] string startMenu = "AddStartMenuscenename";
+    [SerializeField] string credits = "Add credits scene name";
+    [SerializeField] GameObject loadingScreen = null;
+
+    private void Start()
+    {
+        if (loadingScreen != null)
+        {
+            loadingScreen.SetActive(false);
+        }
+    }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.Escape))
-        {
-            print("teste");
+        {            
             LoadMainMenu();
         }
     }
 
     public void LoadMainMenu()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        print("teste");
         SceneManager.LoadScene(startMenu);
     }
 
     public void LoadGameScene()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(level);
+        loadingScreen.SetActive(true);
+        SceneManager.LoadSceneAsync(level);
     }
 
     public void QuitGame()
@@ -34,14 +43,9 @@ public class SceneLoader : MonoBehaviour
         Application.Quit();
     }
 
-    public void ReturnToGame()
+    public void Credits()
     {
-
+        loadingScreen.SetActive(true);
+        SceneManager.LoadSceneAsync(credits);
     }
-
-    public void ManualScene()
-    {
-        SceneManager.LoadScene("Manual Scene");
-    }
-
 }

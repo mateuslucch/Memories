@@ -6,8 +6,11 @@ public class MenuHandler : MonoBehaviour
 {
     [SerializeField] GameObject inGameMenu;
     [SerializeField] GameObject endGameMenu;
-    [SerializeField] GameObject levelChoiceMenu;    
+    [SerializeField] GameObject levelChoiceMenu;
     [SerializeField] GameObject adMessageCanvas;
+
+    // block game menu open when winning processes is running (when true)
+    bool winningPath = false;
 
     private void Awake()
     {
@@ -15,31 +18,38 @@ public class MenuHandler : MonoBehaviour
         endGameMenu.SetActive(false);
         adMessageCanvas.SetActive(false);
         levelChoiceMenu.SetActive(true);
-        // screenBlocker.SetActive(false);
+    }
+
+    public void WinningPath(bool winningPath)
+    {
+        this.winningPath = winningPath;
     }
 
     // for menu button
     public void InGameMenu()
     {
-        if (inGameMenu.activeSelf)
+        if (!winningPath)
         {
+            if (inGameMenu.activeSelf)
+            {
+                if (EndGame.gameFinished)
+                {
+                    levelChoiceMenu.SetActive(true);
+                }
+                inGameMenu.SetActive(false);
+                MenuOpenStatic.menuOpen = false;
+                return;
+            }
             if (EndGame.gameFinished)
             {
-                levelChoiceMenu.SetActive(true);
+                levelChoiceMenu.SetActive(false);
             }
-            inGameMenu.SetActive(false);
-            // screenBlocker.SetActive(false);
-            return;
+            inGameMenu.SetActive(true);
+            MenuOpenStatic.menuOpen = true;
         }
-        if (EndGame.gameFinished)
-        {
-            levelChoiceMenu.SetActive(false);
-        }
-        inGameMenu.SetActive(true);
-        // screenBlocker.SetActive(true);
     }
 
-    // for gamesession things, no buttons
+    // for gamesession things, called on other classes
     public void InGameMenu(bool onOff) { inGameMenu.SetActive(onOff); }
 
     public void EndGameMenu(bool onOff) { endGameMenu.SetActive(onOff); }
