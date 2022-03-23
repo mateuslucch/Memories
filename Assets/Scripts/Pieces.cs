@@ -24,6 +24,7 @@ public class Pieces : MonoBehaviour
 
     Vector3 parentOriginalScale;
     Vector3 childOriginalScale;
+    [SerializeField] Animator pieceAnimation;
 
     private void Start()
     {
@@ -59,6 +60,11 @@ public class Pieces : MonoBehaviour
     {
         spriteRenderer = figureImageObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = animalSprite;
+    }
+
+    public void StartAnimation()
+    {
+        pieceAnimation.SetTrigger("EnterAnimation");
     }
 
     private void OnMouseDown()

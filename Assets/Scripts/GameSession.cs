@@ -30,14 +30,13 @@ public class GameSession : MonoBehaviour
         EndGame.gameFinished = true;
         selectedPieces = new GameObject[2];
         adTrigger = FindObjectOfType<AdTrigger>();
-    }   
+    }
 
     public void AddObjectToArray(GameObject piece)
     {
         adTrigger.CountClicks();
         if (mouseClick)
         {
-            
             soundControl.PlayPieceSound(revealPiece);
             //AudioSource.PlayClipAtPoint(revealPiece, Camera.main.transform.position);
             piece.GetComponent<Pieces>().RevealImage();
@@ -65,7 +64,7 @@ public class GameSession : MonoBehaviour
             {
                 soundControl.PlayPieceSound(notMatchSound);
                 HideBackImages();
-                scoreHandler.ScoreCount(false);                
+                scoreHandler.ScoreCount(false);
             }
 
             // pieces match
@@ -76,6 +75,13 @@ public class GameSession : MonoBehaviour
                 index = 0;
                 scoreHandler.ScoreCount(true);
                 CheckEndGame();
+                if (!EndGame.gameFinished)
+                {
+                    foreach (GameObject piece in selectedPieces)
+                    {
+                        piece.GetComponent<Pieces>().StartAnimation();
+                    }
+                }
             }
         }
     }
@@ -95,15 +101,23 @@ public class GameSession : MonoBehaviour
         numberOfMatchs++;
         if (numberOfMatchs == FindObjectOfType<DistributingPieces>().NumberPieces() / 2)
         {
+            Pieces[] pieces = FindObjectsOfType<Pieces>();
+            foreach (Pieces piece in pieces)
+            {                
+                piece.StartAnimation();
+            }
+
+            EndGame.gameFinished = true;
             //VictoryPath();            
             musicPlayer.EndGameMute(true);
             menuHandler.WinningPath(true);
-            StartCoroutine(PauseBeforeWin());
+            StartCoroutine(PauseBeforeWinPath());
             soundControl.PlayPieceSound(winSound);
+
         }
     }
 
-    IEnumerator PauseBeforeWin()
+    IEnumerator PauseBeforeWinPath()
     {
         yield return new WaitForSecondsRealtime(winSound.length);
         musicPlayer.EndGameMute(false);
@@ -118,7 +132,6 @@ public class GameSession : MonoBehaviour
     // VictoryPath is now called from AdTrigger
     public void VictoryPath()
     {
-        EndGame.gameFinished = true;
         menuHandler.EndGameMenu(true);
         scoreHandler.FinalScore();
         menuHandler.WinningPath(false);

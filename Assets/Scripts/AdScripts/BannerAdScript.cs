@@ -19,7 +19,7 @@ public class BannerAdScript : MonoBehaviour
     {
         // Initialize the SDK if you haven't already done so:
         Advertisement.Initialize(gameId, testMode);
-        print("teste2");
+
         while (!Advertisement.IsReady(showTag))
         {
             yield return null;

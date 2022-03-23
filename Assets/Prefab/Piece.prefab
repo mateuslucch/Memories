@@ -493,6 +493,7 @@ MonoBehaviour:
   figureImageObject: {fileID: 9126190540150630548}
   questionMark: {fileID: 8682653509940840844}
   rotateSpeed: 7
+  pieceAnimation: {fileID: 5519732143205032906}
 --- !u!61 &5299539660540537157
 BoxCollider2D:
   m_ObjectHideFlags: 0
