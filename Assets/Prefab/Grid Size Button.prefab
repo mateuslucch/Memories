@@ -456,6 +456,8 @@ MonoBehaviour:
   numberRows: 3
   buttonText: {fileID: 2337747498716670229}
   buttonScore: {fileID: 7182465741896476731}
+  timeBeforeHide: 3
+  maxScoreColor: {r: 1, g: 0.84313726, b: 0, a: 1}
 --- !u!1 &7107481681122106798
 GameObject:
   m_ObjectHideFlags: 0

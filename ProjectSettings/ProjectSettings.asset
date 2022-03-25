@@ -163,7 +163,7 @@ PlayerSettings:
     iPhone: 0
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 6
+  AndroidBundleVersionCode: 9
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -765,7 +765,7 @@ PlayerSettings:
   cloudProjectId: 8fec2fd6-7a00-4677-8f47-d269b2a32cfc
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Memories
+  projectName: Match the animals
   organizationId: mateuslucch
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

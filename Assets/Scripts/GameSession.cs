@@ -32,18 +32,18 @@ public class GameSession : MonoBehaviour
         adTrigger = FindObjectOfType<AdTrigger>();
     }
 
+    // called from pieces
     public void AddObjectToArray(GameObject piece)
     {
-        adTrigger.CountClicks();
         if (mouseClick)
         {
-            soundControl.PlayPieceSound(revealPiece);
-            //AudioSource.PlayClipAtPoint(revealPiece, Camera.main.transform.position);
-            piece.GetComponent<Pieces>().RevealImage();
-            piece.GetComponent<Pieces>().RemoveQuestionMark();
+            adTrigger.CountClicks();
             selectedPieces[index] = piece;
             index += 1;
             if (index > 1) { mouseClick = false; }
+            soundControl.PlayPieceSound(revealPiece);
+            piece.GetComponent<Pieces>().RevealImage();
+            piece.GetComponent<Pieces>().RemoveQuestionMark();
         }
     }
 
@@ -52,6 +52,7 @@ public class GameSession : MonoBehaviour
         menuHandler.LevelChoiceMenu(false);
     }
 
+    // called from pieces, when they end to reveal
     public void CompareObjects()
     {
         if (index > 1)
@@ -66,8 +67,7 @@ public class GameSession : MonoBehaviour
                 HideBackImages();
                 scoreHandler.ScoreCount(false);
             }
-
-            // pieces match
+            // PIECES MATCH
             else
             {
                 mouseClick = true;
@@ -75,11 +75,12 @@ public class GameSession : MonoBehaviour
                 index = 0;
                 scoreHandler.ScoreCount(true);
                 CheckEndGame();
-                if (!EndGame.gameFinished)
+                if (EndGame.gameFinished == false)
                 {
                     foreach (GameObject piece in selectedPieces)
                     {
                         piece.GetComponent<Pieces>().StartAnimation();
+                        piece.GetComponent<GlowControl>().ChangeColorTrigger();
                     }
                 }
             }
@@ -88,32 +89,29 @@ public class GameSession : MonoBehaviour
 
     private void HideBackImages()
     {
-        mouseClick = true;
-        index = 0;
         foreach (GameObject pieces in selectedPieces)
         {
             StartCoroutine(pieces.GetComponent<Pieces>().HideImagesCountdown(hideCountdown));
         }
+        index = 0;
+        mouseClick = true;
     }
 
     private void CheckEndGame()
     {
         numberOfMatchs++;
-        if (numberOfMatchs == FindObjectOfType<DistributingPieces>().NumberPieces() / 2)
+        if (numberOfMatchs == FindObjectOfType<PieceDistributor>().NumberPieces() / 2)
         {
             Pieces[] pieces = FindObjectsOfType<Pieces>();
             foreach (Pieces piece in pieces)
-            {                
+            {
                 piece.StartAnimation();
             }
 
-            EndGame.gameFinished = true;
-            //VictoryPath();            
             musicPlayer.EndGameMute(true);
             menuHandler.WinningPath(true);
             StartCoroutine(PauseBeforeWinPath());
             soundControl.PlayPieceSound(winSound);
-
         }
     }
 
@@ -151,8 +149,10 @@ public class GameSession : MonoBehaviour
         scoreHandler.ResetScore();
         index = 0;
 
+        // manage menus
         menuHandler.EndGameMenu(false);
         menuHandler.InGameMenu(false);
-        menuHandler.LevelChoiceMenu(true);
+        menuHandler.LevelChoiceMenu(true);        
+        EndGame.gameFinished = true;
     }
 }

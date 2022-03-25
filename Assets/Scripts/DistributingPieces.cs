@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ScreensReference))]
-public class DistributingPieces : MonoBehaviour
+public class PieceDistributor : MonoBehaviour
 {
     [SerializeField] GameObject piecePrefab; //piece prefab
     [SerializeField] Sprite[] piecesSprites; //all possible images
@@ -112,7 +112,7 @@ public class DistributingPieces : MonoBehaviour
                 GameObject newPiece = Instantiate(piecePrefab, piecePosition, transform.rotation);
                 newPiece.transform.localScale = new Vector3(pieceScale - piecesOffset, pieceScale - piecesOffset, 1f);
 
-                //add sprite to piece from piecesTempSprite
+                //add sprite to piece from piecesTempSprite                
                 newPiece.GetComponent<Pieces>().ChangeImage(spritesListTemp[spriteIconIndex]);
                 //remove the added sprite from sprite list (not repeat)
                 spritesListTemp.RemoveAt(spriteIconIndex);

@@ -12,6 +12,7 @@ public class TableSize : MonoBehaviour
     [SerializeField] TextMeshProUGUI buttonText = null;
     [SerializeField] TextMeshProUGUI buttonScore = null;
     [SerializeField] float timeBeforeHide = 3f;
+    [SerializeField] Color maxScoreColor;
 
     // for saving records
     string gridId;
@@ -39,7 +40,12 @@ public class TableSize : MonoBehaviour
     {
         LoadScore();
         buttonText.text = $"{numberLines}x{numberRows}";
-        buttonScore.text = $"Record: {score}";
+        if (score == 3 * ((float)numberLines * (float)numberRows / 2))
+        {
+            buttonScore.color = maxScoreColor;
+            buttonScore.text = $"Max Score!";
+        }
+        else { buttonScore.text = $"Record: {score}"; }
     }
 
 #if UNITY_EDITOR
@@ -65,7 +71,7 @@ public class TableSize : MonoBehaviour
         MenuOpenStatic.menuOpen = false;
         TimeToHide.timeBeforeHide = timeBeforeHide;
 
-        FindObjectOfType<DistributingPieces>().StartMountBoard(numberLines, numberRows);
+        FindObjectOfType<PieceDistributor>().StartMountBoard(numberLines, numberRows);
         FindObjectOfType<GameSession>().HideLevelMenu();
         if (FindObjectOfType<SoundControl>() != null)
         {

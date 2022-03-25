@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1252105539777482556}
   - component: {fileID: 806497076556076976}
   m_Layer: 0
-  m_Name: border
+  m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3742765322827620511}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.05, y: 1.05, z: 1.05}
+  m_LocalScale: {x: 1.03, y: 1.03, z: 1.03}
   m_Children: []
   m_Father: {fileID: 7800168551536525609}
   m_RootOrder: 0
@@ -50,7 +50,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -113,7 +113,7 @@ Transform:
   - {fileID: 1252105539777482556}
   - {fileID: 477649655867455914}
   m_Father: {fileID: 6481608694954309260}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4444457168933487485
 SpriteRenderer:
@@ -134,7 +134,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: de7292d5f6e8f944e9f8fd34199b56da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -366,7 +366,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6481608694954309260}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &9126190540150630546
 SpriteRenderer:
@@ -409,7 +409,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: dc841e0f865bb2f4da13b263e8a95044, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -449,6 +449,7 @@ GameObject:
   - component: {fileID: 6481608694954309260}
   - component: {fileID: -7475169850212686223}
   - component: {fileID: 5299539660540537157}
+  - component: {fileID: 6762610869471306389}
   m_Layer: 0
   m_Name: Piece
   m_TagString: Untagged
@@ -467,8 +468,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 7800168551536525609}
   - {fileID: 9126190540150630547}
+  - {fileID: 7800168551536525609}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -520,3 +521,30 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &6762610869471306389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9126190540967494040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a070b047acc745b4fa2efe5a4b9f78dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  background: {fileID: 4390712009942301548}
+  MainTexColorString: _MainTex_Color
+  colorStringEmission: _Emission_Color
+  glowVectorString: _Emission_Multiplier
+  glowStart: {x: 0, y: 0, z: 0}
+  glowMax: {x: 8, y: 8, z: 8}
+  glowEnd: {x: 1, y: 1, z: 1}
+  colorEmissionStart: {r: 1, g: 1, b: 1, a: 0}
+  colorEmissionEnd: {r: 1, g: 0.84313726, b: 0, a: 0}
+  colorMainTexStart: {r: 1, g: 1, b: 1, a: 0}
+  colorMainTexEnd: {r: 1, g: 0.8431373, b: 0, a: 0}
+  glowChangeSpeed: 8
+  colorChangeSpeed: 0.5
+  emissColorTemp: {r: 0, g: 0, b: 0, a: 0}
+  mainTexColorTemp: {r: 0, g: 0, b: 0, a: 0}

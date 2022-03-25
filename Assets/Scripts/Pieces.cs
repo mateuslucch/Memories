@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(GlowControl))]
 public class Pieces : MonoBehaviour
 {
     [SerializeField] GameObject backgroundSquare;
@@ -10,6 +11,7 @@ public class Pieces : MonoBehaviour
     [SerializeField] float rotateSpeed = 100f;
 
     Transform[] figuresChildTransform;
+    GlowControl glowControl;
 
     int rotateSpin;
 
@@ -29,6 +31,8 @@ public class Pieces : MonoBehaviour
     private void Start()
     {
         float timeBeforeHide = TimeToHide.timeBeforeHide;
+        glowControl = GetComponent<GlowControl>();
+        gameSession = FindObjectOfType<GameSession>();
 
         figureImageObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
         questionMark.SetActive(false);
@@ -43,7 +47,7 @@ public class Pieces : MonoBehaviour
         childOriginalScale = figuresChildTransform[0].transform.localScale;
 
         StartCoroutine(HideImagesCountdown(timeBeforeHide));
-        gameSession = FindObjectOfType<GameSession>();
+
     }
 
     private void FixedUpdate()
@@ -54,17 +58,6 @@ public class Pieces : MonoBehaviour
             if (rotateSpin == -1) { ShowImage(true, 1); }
             else { ShowImage(false, -1); }
         }
-    }
-
-    public void ChangeImage(Sprite animalSprite)
-    {
-        spriteRenderer = figureImageObject.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = animalSprite;
-    }
-
-    public void StartAnimation()
-    {
-        pieceAnimation.SetTrigger("EnterAnimation");
     }
 
     private void OnMouseDown()
@@ -115,6 +108,7 @@ public class Pieces : MonoBehaviour
                 }
                 else
                 {
+                    // reveal question mark in the first hide
                     if (!isFirstClick) { questionMark.SetActive(true); }
                     gameObject.GetComponent<BoxCollider2D>().enabled = true;
                 }
@@ -125,9 +119,21 @@ public class Pieces : MonoBehaviour
     private void RotateObject(Transform pieceChild, int sortingOrder)
     {
         pieceChild.localScale = new Vector3(pieceChild.localScale.x - Time.unscaledDeltaTime * rotateSpeed, pieceChild.localScale.y, pieceChild.localScale.z);
-        if (pieceChild.localScale.x < 0f)
+        if (pieceChild.localScale.x <= 0f)
         {
             figureImageObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
         }
+    }
+
+    public void StartAnimation()
+    {
+        pieceAnimation.SetTrigger("EnterAnimation");
+    }
+
+    // DistributingPieces access this method
+    public void ChangeImage(Sprite animalSprite)
+    {
+        spriteRenderer = figureImageObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = animalSprite;
     }
 }

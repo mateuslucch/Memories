@@ -41,14 +41,14 @@ public class AdTrigger : MonoBehaviour
 
     IEnumerator CountDownBeforeAd()
     {
-        yield return new WaitForSecondsRealtime(waitTime);
-        adBoxMessage.AdMessage(false);
+        yield return new WaitForSecondsRealtime(waitTime);        
         FindObjectOfType<AdManager>().ShowAd(this);
     }
 
     public void ContinueGame()
-    {
+    {        
         FindObjectOfType<GameSession>().VictoryPath();
+        adBoxMessage.AdMessage(false);
     }
 
     public void CountClicks()
